@@ -1,0 +1,32 @@
+{
+  "_comment": {
+    "compare_match_mode": {
+      "1": "Trader-Strategies",
+      "2": "Strategy-Traders",
+      "3": "Strategy-Trader"
+    },
+    "show_mode": {
+      "1": "TargetPosition",
+      "2": "Band",
+      "3": "Both"
+    },
+    "compare_mode": {
+      "1": "Compare -- 如果没有2个以上的trader，则跳过，不画图",
+      "2": "Signal -- 不过有多少个trader，都画图"
+    },
+    "_SplitLine": "=========================Split==========================="
+  },
+  "path_data_file": "F:/StrategyLogData/StrategyCheckLog",
+  "path_output": "F:/StrategyLogData/StrategyCheck-output",
+  "strategies": [
+    "PM-Id807045.MFA_V5_All_L1",
+    "Live-Id807045_All_V5_Leg1"
+  ],
+  "traders": [
+  ],
+  "compare_match_mode": "1",
+  "show_mode": "3",
+  "compare_mode": "1",
+  "start_date": "2018-9-4",
+  "end_date": ""
+}
