@@ -13,9 +13,6 @@ class TargetPositionShower:
 		self.end_date = end_date
 		self.dt_round_level = dt_round_level
 
-	# 获取数据
-	# 遍历所有trader
-
 	def get_data(self):
 		list_df_price = []
 		list_df_target_position = []
@@ -68,7 +65,7 @@ class TargetPositionShower:
 				print(" %s Not pair to Compare " % self.invar_item)
 				return ""
 
-		df_target_position_pv, df_price_pv = self.get_data()
+		df_target_position_pv, df_price_pv = self.get_data
 		list_df_tp_trader = list(set(df_target_position_pv.columns.get_level_values("Strategy_TraderA").tolist()))
 		num_df_tp_trader = len(list_df_tp_trader)
 		gird_top_str = "%s%%" % str(int(5 * (num_df_tp_trader + 1)))
