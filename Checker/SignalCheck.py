@@ -32,26 +32,28 @@ if __name__ == '__main__':
 	#
 	# 1 参数获取
 	dict_config = get_config()
-	path_data_file = dict_config[ "path_data_file" ]
-	path_output = dict_config[ "path_output" ]
-	list_strategies = dict_config[ "strategies" ]
-	list_traders = dict_config[ "traders" ]
-	compare_match_mode = dict_config[ "compare_match_mode" ]
-	show_mode = dict_config[ "show_mode" ]
-	compare_mode = dict_config[ "compare_mode" ]
-	if type(dict_config[ "start_date" ]) == str:
-		start_date = set_start_date(dict_config[ "start_date" ])
+	path_data_file = dict_config["path_data_file"]
+	path_output = dict_config["path_output"]
+	list_strategies = dict_config["strategies"]
+	list_traders = dict_config["traders"]
+	compare_match_mode = dict_config["compare_match_mode"]
+	show_mode = dict_config["show_mode"]
+	compare_mode = dict_config["compare_mode"]
+	dt_round_level = dict_config["dt_round_level"]
+
+	if type(dict_config["start_date"]) == str:
+		start_date = set_start_date(dict_config["start_date"])
 	else:
-		start_date = dict_config[ "start_date" ]
-	if type(dict_config[ "end_date" ]) == str:
-		end_date = set_end_date((dict_config[ "end_date" ]))
+		start_date = dict_config["start_date"]
+	if type(dict_config["end_date"]) == str:
+		end_date = set_end_date((dict_config["end_date"]))
 	else:
-		end_date = dict_config[ "end_date" ]
+		end_date = dict_config["end_date"]
 
 	# 2 获取所需对比的策略的数据目录
 	df_data_file_path = pd.DataFrame(
 		get_data_path(list_strategies, list_traders, path_data_file))
-	print(df_data_file_path[ "Path" ])
+	print(df_data_file_path["Path"])
 
 	# 3 获取并整理数据
 	# 4 画图展示
@@ -78,19 +80,25 @@ if __name__ == '__main__':
 	# 遍历所有对比项
 	for invar_item, df_data_file_path_i in df_data_file_path_gb:
 		'''
-		根据  show_mode分为：
+		show_mode分为：
 		1 TargetPosition 对比
 		2 Band 对比
 		3 Both
+		
+		compare_mode分为：
+		Single : 单独一个trader也展示--展示所有path中的内容；
+		Compare: 仅当path中存在多于或等于2个 相同类型的trader时才展示，用于对比，不对比数据不足的内容。
 		'''
+
 		if show_mode == "1" or show_mode == "3":
-			tp = TargetPositionShower(invar_item, df_data_file_path_i, start_date, end_date)
+			tp = TargetPositionShower(invar_item, df_data_file_path_i, start_date, end_date, dt_round_level)
 			if compare_mode == "2":
-				grid = tp.show_target_position("Signal")
+				grid = tp.show_target_position("Single")
 			else:
 				grid = tp.show_target_position("Compare")
 			if grid == "":
 				continue
+
 			output_path_folder = r"%s/%s" % (path_output, py_start_time)
 			if not os.path.exists(output_path_folder):
 				os.mkdir(output_path_folder)
@@ -102,13 +110,14 @@ if __name__ == '__main__':
 			print(" %s  Done " % invar_item)
 
 		if show_mode == "2" or show_mode == "3":
-			tp = BandShower(invar_item, df_data_file_path_i, start_date, end_date)
+			tp = BandShower(invar_item, df_data_file_path_i, start_date, end_date, dt_round_level)
 			if compare_mode == "2":
 				grid = tp.show_band("Signal")
 			else:
 				grid = tp.show_band("Compare")
 			if grid == "":
 				continue
+
 			output_path_folder = r"%s/%s" % (path_output, py_start_time)
 			if not os.path.exists(output_path_folder):
 				os.mkdir(output_path_folder)
@@ -119,6 +128,6 @@ if __name__ == '__main__':
 			)
 			print(" %s  Done " % invar_item)
 
-	print("    Start in : %s " % py_start_time_t)
-	print(" Finished in : %s " % datetime.now().strftime("%H:%M:%S"))
+	print("    Start at : %s " % py_start_time_t)
+	print(" Finished at : %s " % datetime.now().strftime("%H:%M:%S"))
 	print(" ALL FINISHED")

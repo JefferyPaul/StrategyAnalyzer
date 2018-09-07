@@ -5,11 +5,11 @@ from Trader.Signal import Signal
 
 
 class Trader:
-	def __init__(self, file_path, trader_name, strategy_name, start_date, end_date):
+	def __init__(self, file_path, trader_name, strategy_name, start_date, end_date, dt_round_level):
 		self.data_path = file_path
 		self.name = trader_name
 		self.owner_strategy = strategy_name
-		self.signal = Signal(strategy_name, trader_name, start_date, end_date)
+		self.signal = Signal(strategy_name, trader_name, start_date, end_date, dt_round_level)
 		self.pnl = pd.DataFrame()
 		self.operate_mode = ""
 
