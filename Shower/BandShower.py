@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from datetime import *
 import DataManager
 from Trader.Trader import Trader
 from pyecharts import Line, Grid
@@ -14,8 +13,9 @@ class BandShower:
 		self.end_date = end_date
 		self.dt_round_level = dt_round_level
 
-	def get_data(self, ):
+	def get_data(self):
 		l_band_data = []
+		len_price_longer = 0
 		for i_index in self.df_file_path.index:
 			series_file_path = self.df_file_path.loc[i_index, :]
 			path = {"RawArbSignals":series_file_path["Path"]}
@@ -28,7 +28,7 @@ class BandShower:
 			l_band_data.append(df_band)
 
 		# 计算最大最小值
-		df_band_all = pd.DataFrame(pd.concat(l_band_data, ignore_index=False))
+		df_band_all = pd.DataFrame(pd.concat(l_band_data, ignore_index=True, sort=True))
 		max_px = max(
 			max(df_band_all["BuyEntry"]),
 			max(df_band_all["BuyExit"]),
@@ -43,6 +43,8 @@ class BandShower:
 			min(df_band_all["SellExit"]),
 			min(df_band_all["Price"])
 		)
+		max_px = round(max_px, -int(("%e" % max_px)[-3:]) + 4)
+		min_px = round(min_px, -int(("%e" % min_px)[-3:]) + 4)
 
 		df_band_pv = pd.pivot_table(
 			df_band_all,
@@ -85,7 +87,7 @@ class BandShower:
 		num_df_band_trader = len(list_df_band_trader)
 		gird_top_str = "%s%%" % str(int(5 * (num_df_band_trader + 1)))
 
-		# x轴
+		# 计算合适的 y轴 x轴区间
 		index_band = df_band_pv.index.tolist()
 		index_max = max(index_band)
 		index_min = min(index_band)
@@ -111,10 +113,10 @@ class BandShower:
 				"%s-%s" % (name_Strategy_TraderA, band_type),
 				x_axis=index_band,
 				y_axis=series_band_trader.tolist(),
-				yaxis_max=max_px,
-				yaxis_min=min_px,
 				xaxis_max=index_max,
 				xaxis_min=index_min,
+				yaxis_max=max_px,
+				yaxis_min=min_px,
 				is_xaxis_show=False,
 				is_datazoom_show=True,
 				datazoom_xaxis_index=[0, 1],
@@ -131,17 +133,15 @@ class BandShower:
 		line_legend_top_position_str = "%s%%" % str(int(num_df_band_trader) * 5)
 		series_market_price = df_price_pv[df_price_pv.columns.tolist()[0]]
 		line_mkp.add(
-			"%s" % "t",
+			"%s" % df_price_pv.columns.tolist()[0][1],
 			x_axis=index_band,
 			y_axis=series_market_price.tolist(),
-			# yaxis_max=max(series_market_price.tolist()),
-			# yaxis_min=min(series_market_price.tolist()),
-			yaxis_max=max_px,
-			yaxis_min=min_px,
 			xaxis_max=index_max,
 			xaxis_min=index_min,
-			yaxis_pos="right",
+			yaxis_max=max_px,
+			yaxis_min=min_px,
 			is_xaxis_show=True,
+			# yaxis_pos="right",
 			is_datazoom_show=True,
 			datazoom_xaxis_index=[0, 1],
 			legend_top=line_legend_top_position_str

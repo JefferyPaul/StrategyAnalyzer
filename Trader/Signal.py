@@ -48,7 +48,7 @@ class Signal:
 		      "TargetPosition",
 		      "Price"]
 		     ]
-		df.index = df["DateTime"]
+		# df.index = df["DateTime"]
 
 		self.target_position = df
 		self.cal_std_target_position()
@@ -56,29 +56,33 @@ class Signal:
 
 	def get_band(self, file_path):
 		# RawArbSignals.csv / BAND_xxx.csv
-		with open(file_path, 'r', encoding='UTF-8') as f:
-			df = pd.read_csv(f, index_col=None)
-			df["DateTime"] = df["Date"] + " " + df["Time"]
-			df["DateTime"] = pd.to_datetime(df["DateTime"], format=r"%Y/%m/%d %H:%M:%S").dt.round(self.dt_round_level)
-			df = df.loc[self.start_date < df["DateTime"], :]
-			df = df.loc[df["DateTime"] < self.end_date, :]
-			df['Price'] = df["Close1"] / df["Close2"]
-			df["Ticker"] = "%s / %s" % (df["Ticker1"].tolist()[0], df["Ticker2"].tolist()[0])
-			df["Strategy_TraderA"] = "%s-%s" % (self.owner_strategy, self.owner_trader)
-			df = df.loc[
-			     :,
-			     ["DateTime",
-			      "Strategy_TraderA",
-			      "Ticker",
-			      "BuyEntry",
-			      "BuyExit",
-			      "SellEntry",
-			      "SellExit",
-			      "Price"
-			      ]
-			     ]
-			df.index = df["DateTime"]
-		self.band = df
+		try:
+			with open(file_path, 'r', encoding='GB2312') as f:
+				df = pd.read_csv(f, index_col=None)
+				df["DateTime"] = df["Date"] + " " + df["Time"]
+				df["DateTime"] = pd.to_datetime(df["DateTime"], format=r"%Y/%m/%d %H:%M:%S").dt.round(
+					self.dt_round_level)
+				df = df.loc[self.start_date < df["DateTime"], :]
+				df = df.loc[df["DateTime"] < self.end_date, :]
+				df['Price'] = df["Close1"] / df["Close2"]
+				df["Ticker"] = "%s / %s" % (df["Ticker1"].tolist()[0], df["Ticker2"].tolist()[0])
+				df["Strategy_TraderA"] = "%s-%s" % (self.owner_strategy, self.owner_trader)
+				df = df.loc[
+				     :,
+				     ["DateTime",
+				      "Strategy_TraderA",
+				      "Ticker",
+				      "BuyEntry",
+				      "BuyExit",
+				      "SellEntry",
+				      "SellExit",
+				      "Price"
+				      ]
+				     ]
+			# df.index = df["DateTime"]
+			self.band = df
+		except:
+			pass
 
 	def cal_std_target_position(self):
 		l = []
@@ -87,7 +91,7 @@ class Signal:
 			df.loc[:, "TargetPosition"] = df.loc[:, "TargetPosition"] / max(df["TargetPosition"])
 			l.append(df)
 		df = pd.DataFrame(pd.concat(l, ignore_index=True))
-		df.index = df["DateTime"]
+		# df.index = df["DateTime"]
 		df = df.loc[
 		     :,
 		     ["DateTime",
@@ -102,7 +106,12 @@ class Signal:
 		df = self.target_position
 		if len(df["Ticker"].unique().tolist()) > 1:
 			list_ticker_name = df["Ticker"].unique().tolist()
-			df_price_pivot = df.pivot(index="DateTime", columns="Ticker", values="Price")
+			df_price_pivot = pd.pivot_table(
+				df,
+				index="DateTime",
+				columns="Ticker",
+				values="Price"
+			)
 			df_price_pivot['Price'] = df_price_pivot[list_ticker_name[0]] / df_price_pivot[
 				list_ticker_name[1]]
 

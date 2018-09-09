@@ -1,4 +1,3 @@
-from datetime import *
 import os
 import pandas as pd
 from Trader.Signal import Signal

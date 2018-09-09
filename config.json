@@ -1,9 +1,9 @@
 {
   "_comment": {
     "compare_match_mode": {
-      "1": "Trader-Strategies",
-      "2": "Strategy-Traders",
-      "3": "Strategy-Trader"
+      "1": "Trader-Strategies,   按TraderA分组，将不同的Strategies 进行比较",
+      "2": "Strategy-Traders,    按Strategy分组， 将不同的Traders 进行比较",
+      "3": "Strategy-Trader,     不分组，      单独展示，不比较"
     },
     "show_mode": {
       "1": "TargetPosition",
@@ -11,15 +11,23 @@
       "3": "Both"
     },
     "compare_mode": {
-      "1": "Compare -- 如果没有2个以上的trader，则跳过，不画图",
-      "2": "Single -- 不过有多少个trader，都画图"
+      "1": "Compare,     如果分组内没有2个或以上的 Strategy-TraderA，则跳过，不画图",
+      "2": "Single,      不管分组内有多少个 Strategy-TraderA，均画图"
     },
-    "_SplitLine": "=========================Split==========================="
+    "strategies": "strategy文件夹名字",
+    "traders": "trader名字的 简写，eg: [DLa_DLm]，   不填写：[]，  代表读取所有",
+    "Instruction": [
+      "指定输入输出目录、所需要展示的strategy/trader、起始结算日期、日期时间序列周期、三种mode",
+      "支持输入的文件目录格式： （1）path_data_file/ strategy_name/BAND_xxx.csv (SIG_xxx.csv)， 一般为实盘pub log文件 ",
+      "                       （2）path_data_file/ strategy_name/ trader_name / RawSignals.csv ， 一般为simulation log文件 ",
+      "由于实盘log仅有一天数据，而sim有历史所有数据，所以在做live-pm对比时date项一般填一天的时间"
+    ],
+    "_SplitLine": "======================== Split =========================="
   },
-  "path_data_file": "F:/StrategyLogData/StrategyCheckLog",
-  "path_output": "F:/StrategyLogData/StrategyCheck-output",
+  "path_input_folder": "F:/StrategyLogData/StrategyCheckLog",
+  "path_output_folder": "F:/StrategyLogData/StrategyCheck-output",
   "strategies": [
-    "live-Id807038.MFA",
+    "Live-Id807038.MFA",
     "PM-Id807038.MFA"
   ],
   "traders": [
@@ -27,8 +35,8 @@
   ],
   "compare_match_mode": "1",
   "show_mode": "3",
-  "compare_mode": "2",
-  "start_date": "2018-9-3",
+  "compare_mode": "1",
+  "start_date": "2018-9-6",
   "end_date": "",
   "dt_round_level": "60s"
 }

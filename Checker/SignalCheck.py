@@ -32,8 +32,8 @@ if __name__ == '__main__':
 	#
 	# 1 参数获取
 	dict_config = get_config()
-	path_data_file = dict_config["path_data_file"]
-	path_output = dict_config["path_output"]
+	path_input_folder = dict_config["path_input_folder"]
+	path_output_folder = dict_config["path_output_folder"]
 	list_strategies = dict_config["strategies"]
 	list_traders = dict_config["traders"]
 	compare_match_mode = dict_config["compare_match_mode"]
@@ -50,9 +50,9 @@ if __name__ == '__main__':
 	else:
 		end_date = dict_config["end_date"]
 
-	# 2 获取所需对比的策略的数据目录
+	# 2 获取所需对比的策略的数据所在的目录
 	df_data_file_path = pd.DataFrame(
-		get_data_path(list_strategies, list_traders, path_data_file))
+		get_data_path(list_strategies, list_traders, path_input_folder))
 	print(df_data_file_path["Path"])
 
 	# 3 获取并整理数据
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 			if grid == "":
 				continue
 
-			output_path_folder = r"%s/%s" % (path_output, py_start_time)
+			output_path_folder = r"%s/%s" % (path_output_folder, py_start_time)
 			if not os.path.exists(output_path_folder):
 				os.mkdir(output_path_folder)
 			grid.render(
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 					output_path_folder,
 					invar_item)
 			)
-			print(" %s  Done " % invar_item)
+			print(" %s - TargetPosition  Done " % invar_item)
 
 		if show_mode == "2" or show_mode == "3":
 			tp = BandShower(invar_item, df_data_file_path_i, start_date, end_date, dt_round_level)
@@ -118,7 +118,7 @@ if __name__ == '__main__':
 			if grid == "":
 				continue
 
-			output_path_folder = r"%s/%s" % (path_output, py_start_time)
+			output_path_folder = r"%s/%s" % (path_output_folder, py_start_time)
 			if not os.path.exists(output_path_folder):
 				os.mkdir(output_path_folder)
 			grid.render(
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 					output_path_folder,
 					invar_item)
 			)
-			print(" %s  Done " % invar_item)
+			print(" %s -  band           Done " % invar_item)
 
 	print("    Start at : %s " % py_start_time_t)
 	print(" Finished at : %s " % datetime.now().strftime("%H:%M:%S"))

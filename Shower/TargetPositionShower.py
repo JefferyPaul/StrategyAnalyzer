@@ -1,5 +1,4 @@
 import pandas as pd
-from datetime import *
 from Trader.Trader import Trader
 from pyecharts import Line, Grid
 import numpy as np
@@ -27,12 +26,13 @@ class TargetPositionShower:
 			obj_trader_i.get_target_position()
 			df_trader_target_position = obj_trader_i.signal.std_target_position
 			df_trader_price = obj_trader_i.signal.price
+
 			list_df_target_position.append(df_trader_target_position)
-			# 选择价格。     多trader，pair优先
+			# 价格选择
 			list_df_price.append(df_trader_price)
 
-		df_target_position = pd.DataFrame(pd.concat(list_df_target_position, ignore_index=False))
-		df_price = pd.DataFrame(pd.concat(list_df_price, ignore_index=False))
+		df_target_position = pd.DataFrame(pd.concat(list_df_target_position, ignore_index=True, sort=True))
+		df_price = pd.DataFrame(pd.concat(list_df_price, ignore_index=True, sort=True))
 
 		df_target_position_pv = pd.pivot_table(
 			df_target_position,
@@ -45,7 +45,7 @@ class TargetPositionShower:
 		df_price_pv = pd.pivot_table(
 			df_price,
 			index="DateTime",
-			columns="Strategy_TraderA",
+			columns="Ticker",
 			values="Price",
 			aggfunc=np.mean
 		)
@@ -65,19 +65,20 @@ class TargetPositionShower:
 				print(" %s Not pair to Compare " % self.invar_item)
 				return ""
 
-		df_target_position_pv, df_price_pv = self.get_data
+		# 获取数据
+		df_target_position_pv, df_price_pv = self.get_data()
+
 		list_df_tp_trader = list(set(df_target_position_pv.columns.get_level_values("Strategy_TraderA").tolist()))
+		list_df_tp_trader.sort()
 		num_df_tp_trader = len(list_df_tp_trader)
 		gird_top_str = "%s%%" % str(int(5 * (num_df_tp_trader + 1)))
 
 		# 计算合适的 y轴 x轴区间
-		# x轴
 		index_tp = df_target_position_pv.index.tolist()
-		df_price_pv.index = index_tp
 		index_longer_max = max(index_tp)
 		index_longer_min = min(index_tp)
+		df_price_pv.index = index_tp
 
-		# 分别画图
 		# 初始化图表
 		grid = Grid(
 			width=1200,
@@ -85,7 +86,6 @@ class TargetPositionShower:
 		)
 
 		# 画tp
-		line_mkp = Line()
 		line_target_position = Line()
 		for columns_index in df_target_position_pv.columns:
 			name_Strategy_TraderA = columns_index[0]
@@ -94,7 +94,6 @@ class TargetPositionShower:
 
 			num_trader = list_df_tp_trader.index(name_Strategy_TraderA)
 			line_legend_top_position_str = "%s%%" % str(int(num_trader) * 5)
-			print(list_df_tp_trader, name_Strategy_TraderA, num_trader, line_legend_top_position_str)
 
 			line_target_position.add(
 				"%s-%s" % (name_Strategy_TraderA, ticker_name),
@@ -116,17 +115,18 @@ class TargetPositionShower:
 		)
 
 		# 画MKP
+		line_mkp = Line()
 		line_legend_top_position_str = "%s%%" % str(int(num_df_tp_trader) * 5)
 		series_market_price = df_price_pv[df_price_pv.columns.tolist()[0]]
 		line_mkp.add(
 			"%s" % df_price_pv.columns.tolist()[0],
 			x_axis=index_tp,
 			y_axis=series_market_price.tolist(),
-			yaxis_max=max(series_market_price.tolist()),
-			yaxis_min=min(series_market_price.tolist()),
 			xaxis_max=index_longer_max,
 			xaxis_min=index_longer_min,
-			is_xaxis_show=True,
+			yaxis_max=max(series_market_price.tolist()),
+			yaxis_min=min(series_market_price.tolist()),
+			is_yaxis_show=True,
 			yaxis_pos="right",
 			is_datazoom_show=True,
 			datazoom_xaxis_index=[0, 1],
