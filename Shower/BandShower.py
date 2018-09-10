@@ -67,7 +67,7 @@ class BandShower:
 			aggfunc=np.mean
 		)
 
-		df_band_pv = df_band_pv.fillna(method='ffill')
+		df_band_pv = df_band_pv.fillna(method='ffill', limit=3)
 		return df_band_pv, df_price_pv, max_px, min_px
 
 	def show_band(self, single_or_compare):

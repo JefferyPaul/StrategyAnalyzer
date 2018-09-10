@@ -11,8 +11,6 @@ import pandas as pd
 	"Ticker1", "Ticker2",
 	"Ticker", "Price"
 	]
-	
-	
 '''
 
 
@@ -40,6 +38,7 @@ class Signal:
 			df = df[df["DateTime"] < self.end_date]
 
 		df["Strategy_TraderA"] = "%s-%s" % (self.owner_strategy, self.owner_trader)
+		df["TargetPosition"] = df["TargetPosition"] / df["InitX"]
 		df = df.loc[
 		     :,
 		     ["DateTime",
@@ -88,18 +87,21 @@ class Signal:
 		l = []
 		for i_ticker in self.target_position["Ticker"].unique().tolist():
 			df = self.target_position.loc[self.target_position["Ticker"] == i_ticker, :]
-			df.loc[:, "TargetPosition"] = df.loc[:, "TargetPosition"] / max(df["TargetPosition"])
+			df.loc[:, "TargetPosition"] = df.loc[:, "TargetPosition"] / max(abs(df["TargetPosition"]))
 			l.append(df)
-		df = pd.DataFrame(pd.concat(l, ignore_index=True))
-		# df.index = df["DateTime"]
-		df = df.loc[
-		     :,
-		     ["DateTime",
-		      "Ticker",
-		      "Strategy_TraderA",
-		      "TargetPosition",
-		      "Price"]
-		     ]
+		try:
+			df = pd.DataFrame(pd.concat(l, ignore_index=True))
+			# df.index = df["DateTime"]
+			df = df.loc[
+			     :,
+			     ["DateTime",
+			      "Ticker",
+			      "Strategy_TraderA",
+			      "TargetPosition",
+			      "Price"]
+			     ]
+		except:
+			df = pd.DataFrame()
 		self.std_target_position = df
 
 	def cal_pair_price(self):

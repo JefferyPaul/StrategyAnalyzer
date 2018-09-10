@@ -104,7 +104,7 @@ def get_data_path(chose_strategies, chose_traders, path_root):
 		2 判断是sim or live
 		3 通过 get_sim_data_path / get_live_data_path 获取文件目录及文件信息
 		4 返回 list_data_file_path 
-			[   [strategy_name,trader_nameA,strategy_traderA,file_type,i_file_path],
+			[   [strategy_name, trader_nameA, strategy_traderA, file_type, i_file_path],
 				[],[],[]    ]
 		5 list_data_file_path 转为 df_data_file_path
 		6 筛选所需trader

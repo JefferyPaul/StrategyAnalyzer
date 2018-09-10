@@ -40,6 +40,7 @@ if __name__ == '__main__':
 	show_mode = dict_config["show_mode"]
 	compare_mode = dict_config["compare_mode"]
 	dt_round_level = dict_config["dt_round_level"]
+	position_normal_or_std = dict_config["position_normal_or_std"]
 
 	if type(dict_config["start_date"]) == str:
 		start_date = set_start_date(dict_config["start_date"])
@@ -91,7 +92,8 @@ if __name__ == '__main__':
 		'''
 
 		if show_mode == "1" or show_mode == "3":
-			tp = TargetPositionShower(invar_item, df_data_file_path_i, start_date, end_date, dt_round_level)
+			tp = TargetPositionShower(invar_item, df_data_file_path_i, start_date, end_date, dt_round_level,
+			                          position_normal_or_std)
 			if compare_mode == "2":
 				grid = tp.show_target_position("Single")
 			else:
